@@ -41,6 +41,8 @@ terraform plan    # => Shows the plan (what is going to be created...)
 terraform apply   # => Apply changes
 ```
 
+[![asciicast](https://asciinema.org/a/4LhkKF1rqkM4Hcj8PJ8S1y3k7.svg)](https://asciinema.org/a/4LhkKF1rqkM4Hcj8PJ8S1y3k7)
+
 ## Configure `kubectl` to see your new AKS cluster
 Run the following commands to configure kubernetes clients using kubeconfig output by Terraform
 
