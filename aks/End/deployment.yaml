@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit
+  template:
+    metadata:
+      labels:
+        app: audit
+    spec:
+      containers:
+      - name: audit
+        image: pock8sacr.azurecr.io/auditapplication:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: audit-services
+  labels:
+    app: audit
+spec:
+  ports:
+  - port: 6000
+    targetPort: 80
+  selector:
+    app: audit
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compute-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compute
+  template:
+    metadata:
+      labels:
+        app: compute
+    spec:
+      containers:
+      - name: compute
+        image: pock8sacr.azurecr.io/computeapplication:v1
+        env:
+        - name: AuditServiceUri
+          value: "http://localhost:80"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compute-services
+  labels:
+    app: compute
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5000
+    targetPort: 80
+  selector:
+    app: compute
